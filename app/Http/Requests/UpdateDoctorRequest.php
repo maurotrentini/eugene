@@ -23,7 +23,8 @@ class UpdateDoctorRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'specialty' => '',
+            'specialty' => 'nullable|array', // Assuming specialties is an array
+            'clinic' => 'nullable|array', // Assuming clinics is an array
         ];
     }
 }

@@ -14,7 +14,11 @@
         <strong>Name:</strong> {{ $doctor->name }}
     </div>
     <div class="mb-4">
-        <strong>Specialty:</strong> {{ $doctor->specialty }}
+        <strong>Specialties:</strong> 
+            @php
+                $specialties = $doctor->specialty->pluck('name')->implode(', ');
+            @endphp
+        {{ $specialties }}
     </div>
 
     <div class="grid grid-cols-2 gap-4">

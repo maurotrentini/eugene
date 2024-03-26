@@ -24,7 +24,7 @@
                 <th class="border px-4 py-2">ID</th>
                 <th class="border px-4 py-2">Updated</th>
                 <th class="border px-4 py-2">Name</th>
-                <th class="border px-4 py-2">Specialty</th>
+                <th class="border px-4 py-2">Specialties</th>
             </tr>
         </thead>
         <tbody>
@@ -37,7 +37,11 @@
                             {{ $doctor->name }}
                         </a>
                     </td>
-                    <td class="border px-4 py-2">{{ $doctor->specialty }}</td>
+                    <td class="border px-4 py-2">
+                        @foreach ($doctor->specialty()->orderBy('name', 'asc')->get() as $specialty)
+                            <p>{{ $specialty->name }}</p>
+                        @endforeach
+                    </td>
                 </tr>
             @endforeach
         </tbody>

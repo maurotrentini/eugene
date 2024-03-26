@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Clinic;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ClinicController extends Controller
 {
@@ -48,7 +49,7 @@ class ClinicController extends Controller
 
     public function edit(Clinic $clinic)
     {
-        $doctors = Doctor::all();
+        $doctors = Doctor::with('specialty')->get();
         return view('clinics.edit', compact('clinic','doctors'));
     }
 

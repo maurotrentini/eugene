@@ -32,7 +32,7 @@
                                 <label for="target_clinic" class="block mb-2">Select Record to Merge Into</label>
                                 <select name="target_clinic" id="target_clinic" x-model="selectedTargetClinic"
                                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                    <option value="">Select Target Doctor</option>
+                                    <option value="">Select Target Clinic</option>
                                     @foreach($clinics as $clinic)
                                         <option value="{{ $clinic->id }}">{{ $clinic->id }} - {{ $clinic->name }} ({{ $clinic->address }})</option>
                                     @endforeach

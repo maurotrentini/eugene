@@ -32,7 +32,7 @@
             <label class="block mb-2">Doctors</label>
             <template x-for="(doctor, index) in doctors" :key="index">
                 <div class="flex items-center">
-                    <input disabled type="text" :value="doctor.name + ' (' + doctor.specialty + ')'" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2">
+                    <input disabled type="text" :value="doctor.name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2">
                     <input name="existing_doctor_id[]" type="hidden" :value="doctor.id" >
                     <button type="button" @click="doctors.splice(index, 1)" class="text-red-500">Remove</button>
                 </div>
@@ -47,7 +47,10 @@
                     <select name="doctor_id[]" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                         <option value="">Select Doctor</option>
                         @foreach($doctors as $doctor)
-                            <option value="{{ $doctor->id }}">{{ $doctor->name }} ({{ $doctor->specialty }})</option>
+                            @php
+                                $specialties = $doctor->specialty->pluck('name')->implode(', ');
+                            @endphp
+                            <option value="{{ $doctor->id }}">{{ $doctor->name }} ({{ $specialties }})</option>
                         @endforeach
                     </select>
                     <button type="button" @click="doctors.splice(index, 1)" class="text-red-500 mt-2">Remove</button>

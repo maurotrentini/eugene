@@ -28,7 +28,10 @@
             <select name="referring_doctor_id" id="referring_doctor_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                 <option value="">Select Doctor</option>
                 @foreach($doctors as $doctor)
-                    <option value="{{ $doctor->id }}" {{ old('referring_doctor_id') == $doctor->id ? 'selected' : '' }}>{{ $doctor->name }} ({{ $doctor->specialty }})</option>
+                    @php
+                        $specialties = $doctor->specialty->pluck('name')->implode(', ');
+                    @endphp
+                    <option value="{{ $doctor->id }}">{{ $doctor->name }} ({{ $specialties }})</option>
                 @endforeach
             </select>
             @error('referring_doctor_id')

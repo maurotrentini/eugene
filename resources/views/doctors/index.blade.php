@@ -60,7 +60,7 @@
                     <th class="border px-4 py-2">ID</th>
                     <th class="border px-4 py-2">Updated</th>
                     <th class="border px-4 py-2">Name</th>
-                    <th class="border px-4 py-2">Specialty</th>
+                    <th class="border px-4 py-2">Specialties</th>
                     <th class="border px-4 py-2">Clinics</th>
                     <th class="border px-4 py-2"># Tests</th>
                     <th class="border px-4 py-2">Actions</th>
@@ -78,7 +78,11 @@
                         <td class="border px-4 py-2">{{ $doctor->id }}</td>
                         <td class="border px-4 py-2">{{ $doctor->updated_at->format('Y-m-d H:i:s') }}</td>
                         <td class="border px-4 py-2">{{ $doctor->name }}</td>
-                        <td class="border px-4 py-2">{{ $doctor->specialty }}</td>
+                        <td class="border px-4 py-2">
+                            @foreach ($doctor->specialty()->orderBy('name', 'asc')->get() as $specialty)
+                                <p>{{ $specialty->name }}</p>
+                            @endforeach
+                        </td>
                         <td class="border px-4 py-2">
                             @foreach ($doctor->clinic()->orderBy('name', 'asc')->get() as $clinic)
                                 <p><a href="{{ route('clinics.show', $clinic) }}">{{ $clinic->name }} ({{ $clinic->address }})</a></p>

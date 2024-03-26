@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Doctor;
 use App\Models\Clinic;
+use App\Models\Specialty;
 use App\Models\Test;
 use App\Http\Requests\StoreDoctorRequest;
 use App\Http\Requests\UpdateDoctorRequest;
@@ -17,12 +18,15 @@ class DoctorController extends Controller
         $search = $request->input('search');
         $doctors = Doctor::withCount('tests')
                             ->with('clinic')
+                            ->with('specialty')
                             ->when($search, function ($query) use ($search) {
                                 $query->where('name', 'like', '%'.$search.'%')
-                                      ->orWhere('specialty', 'like', '%'.$search.'%')
-                                      ->orWhereHas('clinic', function ($query) use ($search) {
-                                        $query->where('name', 'like', '%'.$search.'%');
-                                    });
+                                        ->orWhereHas('specialty', function ($query) use ($search) {
+                                            $query->where('name', 'like', '%'.$search.'%');
+                                        })
+                                        ->orWhereHas('clinic', function ($query) use ($search) {
+                                            $query->where('name', 'like', '%'.$search.'%');
+                                        });
                             })
                             ->orderBy('updated_at', 'desc')->paginate(100);
 
@@ -32,15 +36,19 @@ class DoctorController extends Controller
     public function create()
     {
         $clinics = Clinic::all();
+        $specialties = Specialty::all();
 
-        return view('doctors.create',compact('clinics'));
+        return view('doctors.create',compact('clinics','specialties'));
     }
 
     public function store(StoreDoctorRequest $request)
     {
         $clinics = $request->input('clinic_id') ?? [];
 
-        Doctor::create($request->validated())->clinic()->attach(array_unique(array_filter($clinics)));
+        $doctor = Doctor::create($request->validated());
+        $doctor->clinic()->attach(array_unique(array_filter($clinics)));
+        $doctor->specialty()->attach($request->input('specialties', []));
+
         return redirect()->route('doctors.index')->with('success', 'Doctor created successfully.');
     }
 
@@ -51,19 +59,25 @@ class DoctorController extends Controller
 
     public function edit(Doctor $doctor)
     {
+        $specialties = Specialty::all();
         $clinics = Clinic::all();
 
-        return view('doctors.edit', compact('doctor','clinics'));
+        $doctor->load('specialty', 'clinic');
+
+        return view('doctors.edit', compact('doctor', 'specialties', 'clinics'));
+
     }
 
     public function update(UpdateDoctorRequest $request, Doctor $doctor)
     {
+        $doctor->update($request->validated());
+
         $clinics = $request->input('clinic_id') ?? [];
         $existingClinics = $request->input('existing_clinic_id') ?? [];
         $newClinics = array_unique(array_filter(array_merge($clinics, $existingClinics)));
 
         $doctor->clinic()->sync($newClinics);
-        $doctor->update($request->validated());
+        $doctor->specialty()->sync($request->input('specialties', []));
 
         return redirect()->route('doctors.index')->with('success', 'Doctor updated successfully.');
     }
