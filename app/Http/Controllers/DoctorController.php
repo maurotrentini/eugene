@@ -119,7 +119,15 @@ class DoctorController extends Controller
             }
             
             // After attaching all clinics, detach them from the source doctor
-            $sourceDoctor->clinic()->detach();
+            $sourceDoctor->clinic()->detach(); //may not be required because of on delete cascade declared in migration
+
+            // Merge specialties
+            foreach ($sourceDoctor->specialty as $specialty) {
+                if (!$targetDoctor->specialty->contains($specialty)) {
+                    $targetDoctor->specialty()->attach($specialty->id);
+                }
+            }           
+            // $sourceDoctor->specialty()->detach(); 
 
             // Delete the merged doctor
             Doctor::find($doctorId)->delete();
